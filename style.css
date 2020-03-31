@@ -1,0 +1,16 @@
+.flashcard {
+	margin: 0 auto;
+    margin-top: 2em;
+    max-width: 500px;
+    max-height: 600px;
+    min-width: 100px;
+    padding:1em;
+    border: 1px dotted black;
+    
+    display:none;
+}
+
+.steuerung {
+	width:200px;
+	margin:0 auto;
+	}
