@@ -1,7 +1,7 @@
 ﻿base   flashcards
 author Gero Gothe
 email  practical@medizin-lernen.de
-date   2020-03-31
+date   2020-04-11
 name   Flashcards Quiz
 desc   Renders a simple flashcard quiz
 url    https://github.com/practical-solutions/dokuwiki-plugin-flashcards

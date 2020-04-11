@@ -62,21 +62,53 @@ class syntax_plugin_flashcards extends DokuWiki_Syntax_Plugin {
         if($format == 'xhtml') {
 			
 		
-			$m  = "<div class='steuerung'>
-				   <img class='fc_button' onclick='showPage(-1)' src='".DOKU_BASE."lib/plugins/flashcards/left.png'>
-				   <img class='fc_button' onclick='showPage(1)' src='".DOKU_BASE."lib/plugins/flashcards/right.png'>
+		
+			$m  = "<div id='steuerung'>
+				   <img id='btn1' class='fc_button' onclick='showPage(-1)' src='lib/plugins/flashcards/img/left.png'>
+				   <img id='btn2' class='fc_button' onclick='correct()' src='lib/plugins/flashcards/img/yes.png'>
+				   <img id='btn3' class='fc_button' onclick='showawnser()' src='lib/plugins/flashcards/img/show.png'>
+				   <img id='btn4' class='fc_button' onclick='wrong()' src='lib/plugins/flashcards/img/no.png'>
+				   <img id='btn5' class='fc_button' onclick='showPage(1)' src='lib/plugins/flashcards/img/right.png'>
+				   <div id='fc_info'></div>
+				   
+				   <div class='fc_progressbar'>
+				   <div id='fc_progress_fill'></div>
+				   </div>
+				   
 				   </div>";
+				   
+				   
+			
+			$t = "<div class='fc_button' onclick='startquiz()'>";
+			$t .= "<img src='lib/plugins/flashcards/img/quiz.png'> <div class='fc-btn-caption'>Quiz starten</div>";
+			$t .= "<span>Antworten evaluieren und wiederholen, bis sie im Gedächtnis sind</span>";
+			$t .= "</div>";
+			$t .= "<br><hr>";
+			$t .= "<div class='fc_button' onclick='startread()'>";
+			$t .= "<img src='lib/plugins/flashcards/img/info.png'> <div class='fc-btn-caption'>Fragen durchscrollen</div>";
+			$t .= "<span>Fragen und Antworten durchblätten</span>";
+			$t .= "</div>";
+			$t .= "<br><hr>";
+			$t .= "<div class='fc_button' onclick='showall()'>";
+			$t .= "<img src='lib/plugins/flashcards/img/read.png'> <div class='fc-btn-caption'>Alles zeigen</div>";
+			$t .= "<span>Fragen und Antworten hintereinander anzeigen</span>";
+			$t .= "</div>";
+			
+			# card0 = Starting area
+			$m .= "<div class='flashcard' id='card0'>".($t)."</div>";
+
 				
 			$pages = array_map('trim', explode("----",$data));
 			
-			$c=0;
-			foreach ($pages as $p){				
-				$t= p_render('xhtml',p_get_instructions($p),$info);
-				$m .= "<div class='flashcard' id='card$c'>".($t)."</div>";
-				$c++;			
+			# Generate flashcard containers
+			for ($c=1;$c<count($pages)+1;$c++) {				
+				$p = $pages[$c-1];
+				$t= p_render('xhtml',p_get_instructions($p),$info);				
+				$m .= "<div class='flashcard' id='card$c'>".($t)."</div>";		
 			}
 			
 			# Show first page on start
+			$c--; # Dont count start page
 			$m .= "<script>karten=$c;showPage();</script>";
 						
 			$renderer->doc .= $m;

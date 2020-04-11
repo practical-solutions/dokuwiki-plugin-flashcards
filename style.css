@@ -1,16 +1,62 @@
 .flashcard {
-	margin: 0 auto;
+	font-size: 20px;
+    margin: 0 auto;
     margin-top: 2em;
-    max-width: 500px;
+    max-width: 700px;
     max-height: 600px;
     min-width: 100px;
-    padding:1em;
-    border: 1px dotted black;
-    
+    min-height: 1000px;
+    padding: 1em;
+	
     display:none;
 }
 
-.steuerung {
-	width:200px;
+/* needed in some themes, e.g. sprintdoc */
+.flashcard p{
+	font-size: 20px;
+}
+
+.fc_progressbar {
+	width:250px;
+	background-color:lightgray;
 	margin:0 auto;
-	}
+	margin-top:1em;
+}
+
+#fc_progress_fill {
+	background-color:lightsteelblue;
+	height:10px;
+	width:20%
+}
+	
+.fc_button {
+	padding: 5px;	
+	cursor:pointer;
+}
+
+.fc_button:hover {
+	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.75);
+}
+
+.fc_button img {
+	float:left;
+	padding:5px;
+	padding-right:10px;
+	
+}
+
+.fc_button .fc-btn-caption {
+	font-weight:bold;
+}
+
+.fc_button span {
+	font-size:75%;
+	color:gray;
+	display:inherit;
+}
+
+#steuerung {
+	width:100%;
+	text-align:center;
+	display:none;
+}

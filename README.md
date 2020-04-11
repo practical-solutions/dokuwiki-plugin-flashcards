@@ -1,6 +1,6 @@
 # Flashcards-Plugin for DokuWiki
 
-Converts some content into a set of scrollable/playable flashcards
+Converts some content into a set of scrollable/playable flashcards. Does NOT support the Internet Explorer!
 
 ## Usage
 
@@ -17,3 +17,8 @@ Second card
 Third card
 </cards>
 ```
+
+## Issues / Ideas
+
+* Improve scrolling / height settings
+* Direct editing of the flashcards
