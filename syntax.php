@@ -63,12 +63,13 @@ class syntax_plugin_flashcards extends DokuWiki_Syntax_Plugin {
 			
 		
 		
-			$m  = "<div id='steuerung'>
+			$m  = "<div id='steuerung' class='steuerung'>
 				   <img id='btn1' class='fc_button' onclick='showPage(-1)' src='lib/plugins/flashcards/img/left.png'>
 				   <img id='btn2' class='fc_button' onclick='correct()' src='lib/plugins/flashcards/img/yes.png'>
 				   <img id='btn3' class='fc_button' onclick='showawnser()' src='lib/plugins/flashcards/img/show.png'>
 				   <img id='btn4' class='fc_button' onclick='wrong()' src='lib/plugins/flashcards/img/no.png'>
 				   <img id='btn5' class='fc_button' onclick='showPage(1)' src='lib/plugins/flashcards/img/right.png'>
+				   <img id='btn6' class='fc_button' onclick='flip(1)' src='lib/plugins/flashcards/img/redo.png'>
 				   <div id='fc_info'></div>
 				   
 				   <div class='fc_progressbar'>

@@ -103,6 +103,10 @@ function showawnser(){
 	nextQuestion();
 }
 
+function flip(n=0){
+	if (n==1) {chosen = chosen-2; nextQuestion();}
+}
+
 /* 
 0 = hide menu completely, 
 1 = show scrolling arrows, 
@@ -113,14 +117,14 @@ function Menu(n=0) {
 	
 	switch (n) {
 		case 1: var btn = Array(1,5);break;
-		case 2: var btn = Array(2,4);break;
+		case 2: var btn = Array(2,4,6);break;
 		case 3: var btn = Array(0,3);break;
 		default: document.getElementById("steuerung").style.display = "none";
 				 return;
 	}
 	
 	/* hide all */
-	for (var c=1;c<6;c++) {document.getElementById("btn"+c).style.display = "none";}
+	for (var c=1;c<7;c++) {document.getElementById("btn"+c).style.display = "none";}
 	
 	
 	// display chosen buttons

@@ -1,19 +1,19 @@
 .flashcard {
-	font-size: 20px;
+	font-size: 22px;
     margin: 0 auto;
     margin-top: 2em;
     max-width: 700px;
     max-height: 600px;
     min-width: 100px;
     min-height: 1000px;
-    padding: 1em;
+    padding: 1em 2em 1em 2em;
 	
     display:none;
 }
 
 /* needed in some themes, e.g. sprintdoc */
-.flashcard p{
-	font-size: 20px;
+.flashcard p, .flashcard li{
+	font-size: 22px;
 }
 
 .fc_progressbar {
@@ -32,6 +32,7 @@
 .fc_button {
 	padding: 5px;	
 	cursor:pointer;
+	border-radius:5px;
 }
 
 .fc_button:hover {
@@ -43,6 +44,7 @@
 	padding:5px;
 	padding-right:10px;
 	
+	
 }
 
 .fc_button .fc-btn-caption {
@@ -53,6 +55,12 @@
 	font-size:75%;
 	color:gray;
 	display:inherit;
+}
+
+#fc_info {
+	padding-top: 5px;
+    font-size: 10px;
+    color: gray;
 }
 
 #steuerung {
