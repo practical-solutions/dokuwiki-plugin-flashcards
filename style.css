@@ -68,3 +68,32 @@
 	text-align:center;
 	display:none;
 }
+
+#editor {
+	text-align:center;
+	display:none;
+}
+
+#cardtext {
+    font-family: Courier;
+    font-size: 19px;
+    padding: 1em;
+    line-height: 1.5;
+    background-color: linen;
+	border:none;
+}
+
+#edit_btn {
+	float: right;
+	border: 1px solid gray;
+	padding: 1px 10px;
+	color: gray;
+	display:none;
+	position: absolute;
+	right: 1.5em;
+	cursor:pointer;
+}
+
+#ajax_wait{
+	display:none;
+}

@@ -38,7 +38,7 @@ function startread(){
 function showall(){
 	document.getElementById("card0").style.display = "none"; /* start page with options */
 	
-	for (var c=1;c<karten;c++) {
+	for (var c=1;c<karten+1;c++) {
 		document.getElementById("card"+c).style.display = "block";
 		document.getElementById("card"+c).style.minHeight = 0;
 	}
@@ -134,6 +134,8 @@ function Menu(n=0) {
 	}
 	
 	document.getElementById("steuerung").style.display = "block";
+	document.getElementById("edit_btn").style.display = "inline-block";
+	
 	
 }
 
@@ -146,6 +148,67 @@ function progressBar(n){
 	document.getElementById("fc_progress_fill").style.width = n+"%";
 }
 
+function TextToEditor(){
+	if (chosen>0) document.getElementById("cardtext").value=decodeURIComponent(card[chosen-1]);
+	//console.log(card);
+}
+
+function editMode(){
+	TextToEditor();
+	
+	document.getElementById("card"+chosen).style.display = "none";
+	document.getElementById("steuerung").style.display = "none";
+	document.getElementById("edit_btn").style.display = "none";
+	
+	document.getElementById("editor").style.display = "block";
+}
+
+function readMode(){
+	document.getElementById("card"+chosen).style.display = "block";
+	document.getElementById("steuerung").style.display = "block";
+	document.getElementById("edit_btn").style.display = "block";
+	
+	document.getElementById("editor").style.display = "none";
+}
+
+
+function saveCard(){
+	if (chosen==0) return; // starting menu
+	
+	document.getElementById("editor_ribbon").style.display = "none";
+	document.getElementById("ajax_wait").style.display = "block";
+	
+	
+	var m = encodeURIComponent(document.getElementById("cardtext").value);
+	
+	jQuery.post(
+    DOKU_BASE + 'lib/exe/ajax.php',
+    {
+        call: 'editcard',
+        newtext : m,
+		oldtext  : card[chosen-1],
+		id: JSINFO["id"],
+    },
+    function(data) {
+		data = decodeURIComponent(data); 
+        console.log(data);
+		
+        card[chosen-1] = m;
+		document.getElementById("card"+chosen).innerHTML = data; // load to present div-container
+		
+		document.getElementById("ajax_wait").style.display = "none";
+		document.getElementById("editor_ribbon").style.display = "block";
+		
+		readMode();
+    },
+    'html'
+	);
+	
+}
+
 // This card is displayed at present
 var chosen = 0;
 var awnsered = new Array();
+
+// All cards in WikiMarkup for the Editor
+var card = new Array();
