@@ -20,8 +20,9 @@ Third card
 
 ## Issues / Ideas
 
-* Improve scrolling / height settings
-* Direct editing of the flashcards
+* Improve scrolling / height settings -> DONE!
+* Direct editing of the flashcards -> DONE!
+* ACL-Check on direct editing
 
 ### Learning System
 

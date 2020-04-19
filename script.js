@@ -104,7 +104,10 @@ function showawnser(){
 }
 
 function flip(n=0){
-	if (n==1) {chosen = chosen-2; nextQuestion();}
+	if (n==1) {
+		document.getElementById("card"+chosen).style.display = "none";
+		chosen = chosen-2; nextQuestion();
+	}
 }
 
 /* 
@@ -172,13 +175,23 @@ function readMode(){
 }
 
 
+function switchAjaxLoad(n=0){
+	if (n==0) {
+		document.getElementById("editor_ribbon").style.display = "none";
+		document.getElementById("ajax_wait").style.display = "block";
+	} else {
+		document.getElementById("ajax_wait").style.display = "none";
+		document.getElementById("editor_ribbon").style.display = "block";
+		readMode();
+	}
+}
+	
+
 function saveCard(){
 	if (chosen==0) return; // starting menu
 	
-	document.getElementById("editor_ribbon").style.display = "none";
-	document.getElementById("ajax_wait").style.display = "block";
-	
-	
+	switchAjaxLoad();
+		
 	var m = encodeURIComponent(document.getElementById("cardtext").value);
 	
 	jQuery.post(
@@ -191,15 +204,13 @@ function saveCard(){
     },
     function(data) {
 		data = decodeURIComponent(data); 
-        console.log(data);
+        //console.log(data);
 		
         card[chosen-1] = m;
 		document.getElementById("card"+chosen).innerHTML = data; // load to present div-container
 		
-		document.getElementById("ajax_wait").style.display = "none";
-		document.getElementById("editor_ribbon").style.display = "block";
-		
-		readMode();
+		switchAjaxLoad(1);
+
     },
     'html'
 	);

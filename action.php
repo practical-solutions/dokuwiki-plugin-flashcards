@@ -64,7 +64,31 @@ class action_plugin_flashcards extends DokuWiki_Action_Plugin {
 		$page = str_replace($oldtext,$newtext,rawWiki($id));
 		saveWikiText($id, $page, "Flashcard edited");
 		
-		$response = p_render('xhtml',p_get_instructions($newtext),$info); # send html response
+		# add namespace to image if relativ path is used
+		$r = p_render('xhtml',p_get_instructions($newtext),$info);
+		
+		
+		# add namespace to media files with relative paths
+		$ns = substr($id,0,strrpos($id,":")+1);
+		
+		$p = strpos($r,"media=");
+		
+		do {
+		
+			$p2 = strpos($r,'"',$p);
+			$f = substr($r,$p+6,$p2-$p-6);
+			
+			if (strpos($f,":") === false) {
+				$new = "media=".$ns.$f;		
+				$r = str_replace("media=$f",$new,$r);
+			}
+			
+			$p = strpos($r,"media=",$p+10+strlen($ns));
+			
+		} while ($p !== false);
+		
+		# Send html response
+		$response = $r; 
 		echo trim($response);
 				
 	}
