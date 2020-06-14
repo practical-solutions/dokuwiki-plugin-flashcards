@@ -106,3 +106,7 @@
 #ajax_wait{
 	display:none;
 }
+
+.plugin__flashcards__bottomribbon {
+    margin-top:1em;
+}

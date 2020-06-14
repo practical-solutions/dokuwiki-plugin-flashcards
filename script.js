@@ -199,15 +199,19 @@ function saveCard(){
     {
         call: 'editcard',
         newtext : m,
-		oldtext  : card[chosen-1],
+        nr : chosen-1,
 		id: JSINFO["id"],
     },
     function(data) {
 		data = decodeURIComponent(data); 
         //console.log(data);
 		
-        card[chosen-1] = m;
-		document.getElementById("card"+chosen).innerHTML = data; // load to present div-container
+        if (data.substr(0,6) == 'Error:') {
+            alert(data);
+        } else {
+            card[chosen-1] = m;
+            document.getElementById("card"+chosen).innerHTML = data; // load to present div-container
+        }
 		
 		switchAjaxLoad(1);
 
@@ -215,6 +219,14 @@ function saveCard(){
     'html'
 	);
 	
+}
+
+function getPre(){
+    if (chosen>1){
+        document.getElementById("cardtext").value=decodeURIComponent(card[chosen-2]);
+    } else {
+        alert("No card before this one");
+    }
 }
 
 // This card is displayed at present
