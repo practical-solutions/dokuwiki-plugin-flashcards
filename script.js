@@ -39,9 +39,12 @@ function showall(){
 	document.getElementById("card0").style.display = "none"; /* start page with options */
 	
 	for (var c=1;c<karten+1;c++) {
-		document.getElementById("card"+c).style.display = "block";
-		document.getElementById("card"+c).style.minHeight = 0;
-	}
+        pre = "<div class='plugin__flashcards_fp_border'><div class='plugin__flashcards_fp_header'>" + "Karte " + c + "</div>";
+        document.getElementById("card"+c).innerHTML = pre + document.getElementById("card"+c).innerHTML + "</div>";
+
+        document.getElementById("card"+c).style.display = "block";
+        document.getElementById("card"+c).style.minHeight = 0;
+    }
 }
 
 function startquiz() {
@@ -63,19 +66,24 @@ function nextQuestion(){
 		return;
 	}
 	
+    msg = '';
 	do {
 		chosen++;
-		if (chosen>karten) chosen = 1;
+		if (chosen>karten) {
+            chosen = 1;
+            msg = 'Neue Runde. Du hast bisher <b>' + percentage() + '%</b> richtig.';
+        }
 	} while (awnsered[chosen]);
 	
 	// display chosen card
+    message(msg);
+    
 	document.getElementById("card"+chosen).style.display = "block";
 	if (isOdd(chosen)) {Menu(3);} else {Menu(2);}
 	
 	progressBar(percentage());
 	presentQ();
-	
-	
+
 }
 
 /* percent correct awnsers */
@@ -86,6 +94,16 @@ function percentage(){
 	}
 	
 	return Math.round((c/(i-1))*100);
+}
+
+function message(m){
+    var msg = document.getElementById('plugin__flashcard_message');
+    if (m=="") {
+        msg.style.display = 'none';
+    } else {
+        msg.innerHTML = m;
+        msg.style.display = 'block';
+    }
 }
 
 
@@ -137,7 +155,7 @@ function Menu(n=0) {
 	}
 	
 	document.getElementById("steuerung").style.display = "block";
-	document.getElementById("edit_btn").style.display = "inline-block";
+	if (JSINFO['access']=="editor") document.getElementById("plugin__flashcard_edit_btn").style.display = "inline-block";
 	
 	
 }
@@ -161,7 +179,7 @@ function editMode(){
 	
 	document.getElementById("card"+chosen).style.display = "none";
 	document.getElementById("steuerung").style.display = "none";
-	document.getElementById("edit_btn").style.display = "none";
+    if (JSINFO['access']=="editor") document.getElementById("plugin__flashcard_edit_btn").style.display = "none";
 	
 	document.getElementById("editor").style.display = "block";
 }
@@ -169,7 +187,7 @@ function editMode(){
 function readMode(){
 	document.getElementById("card"+chosen).style.display = "block";
 	document.getElementById("steuerung").style.display = "block";
-	document.getElementById("edit_btn").style.display = "block";
+    if (JSINFO['access']=="editor") document.getElementById("plugin__flashcard_edit_btn").style.display = "block";
 	
 	document.getElementById("editor").style.display = "none";
 }
@@ -220,6 +238,7 @@ function saveCard(){
 	);
 	
 }
+
 
 function getPre(){
     if (chosen>1){

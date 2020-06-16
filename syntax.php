@@ -85,7 +85,7 @@ class syntax_plugin_flashcards extends DokuWiki_Syntax_Plugin {
 						
 			$renderer->doc .= $m;
 			
-			$renderer->doc .= "<div id='edit_btn' onclick='editMode()'>Bearbeiten</div>";
+			$renderer->doc .= "<div id='plugin__flashcard_edit_btn' onclick='editMode()'>Bearbeiten</div>";
 			
 			return true;
 		}

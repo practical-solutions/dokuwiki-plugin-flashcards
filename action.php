@@ -23,23 +23,23 @@ class action_plugin_flashcards extends DokuWiki_Action_Plugin {
      */
     public function register(Doku_Event_Handler $controller) {
 
-        
         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this,'_ajax_call');
+        $controller->register_hook('DOKUWIKI_STARTED', 'AFTER',  $this, 'acl_info'); # pass ACL Level to JavaScript
 
     }
 
-    
-    
-    
     # Adds the Ajax-Call "editcard"
     public function _ajax_call(Doku_Event $event, $param) {
         if ($event->data !== 'editcard') {
             return;
         }
-    
+
         # No other ajax call handlers needed
         $event->stopPropagation();
         $event->preventDefault();
+        
+        global $ID;
+        if (auth_quickaclcheck($ID) < AUTH_CREATE) {echo "Error: No editing rights granted.";return;};
  
         global $INPUT;
 
@@ -108,7 +108,17 @@ class action_plugin_flashcards extends DokuWiki_Action_Plugin {
 		echo trim($response);
 				
 	}
-
+    
+    # Function to tell javascript function wether to display editing contents
+    public function acl_info(&$event, $param) {
+        global $JSINFO;        
+        global $ID;
+        
+        if (auth_quickaclcheck($ID) < AUTH_CREATE) {
+            $JSINFO['access'] = 'reader';
+        } else $JSINFO['access'] = 'editor';
+        
+    }
 }
 
 // vim:ts=4:sw=4:et:
