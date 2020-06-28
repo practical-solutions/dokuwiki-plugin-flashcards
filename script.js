@@ -14,17 +14,26 @@ function showPage(n=0){
 	
 	presentQ();
 	progressBar(Math.round((chosen/karten*100)));
-	
+    
 	// display chosen card
 	document.getElementById("card"+chosen).style.display = "block";
 	
 	if (chosen==0) Menu(0);
+    
 	
 }
 
+
 // Display present question nr.
 function presentQ(){
-	document.getElementById("fc_info").innerHTML = "Frage "+(Math.round(chosen/2))+"/"+Math.round(karten/2);
+    if (chosen<1) loadFromCookie();
+    
+    document.getElementById("fc_info").innerHTML = "Frage "+(Math.round(chosen/2))+"/"+Math.round(karten/2);
+    
+    if (chosen>0) {
+        //console.log("Save: \n"+cookieText());
+        setCookie("flashcard", cookieText(), 2);
+    }
 }
 
 /* start reading mode */
@@ -60,6 +69,7 @@ function nextQuestion(){
 	document.getElementById("card"+chosen).style.display = "none";
 	
 	if (awnsered.lastIndexOf(false) < 1) {
+        setCookie("flashcard", "", 0);
 		document.getElementById("card0").innerHTML = "Du hast alle Fragen richtig beantwortet! <br><br> <button onClick='window.location.reload();'>Refresh Page</button>";
 		chosen=0;
 		showPage();
@@ -128,6 +138,33 @@ function flip(n=0){
 	}
 }
 
+// Cookie functions from: https://www.w3schools.com/js/js_cookies.asp
+function setCookie(cname, cvalue, exdays) {
+    user = JSINFO['user_id'];
+    if (user != 'false') {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+ d.toUTCString();
+        document.cookie = cname + '_' + JSINFO['user_id'] + "=" + cvalue + ";" + expires + ";path=/";
+    }
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
 /* 
 0 = hide menu completely, 
 1 = show scrolling arrows, 
@@ -155,9 +192,10 @@ function Menu(n=0) {
 	}
 	
 	document.getElementById("steuerung").style.display = "block";
-	if (JSINFO['access']=="editor") document.getElementById("plugin__flashcard_edit_btn").style.display = "inline-block";
-	
-	
+    if (document.getElementById("plugin__flashcard_edit_btn")!=null) {
+        if (JSINFO['access']=="editor") document.getElementById("plugin__flashcard_edit_btn").style.display = "inline-block";
+    }
+    
 }
 
 function isOdd(num) {
@@ -246,6 +284,60 @@ function getPre(){
     } else {
         alert("No card before this one");
     }
+}
+
+/* Cookie Text which is saved */
+function cookieText() {
+    if (awnsered.length == 0) return "None.";
+    var res = JSINFO['id'] + "/" + chosen + "/";
+    for (c=1;c<awnsered.length;c=c+2) {
+        if (awnsered[c]) {res = res + "1";} else {res = res + "0";}
+    }
+    return res;
+}
+
+function loadFromCookie(){
+    user = JSINFO['user_id'];
+    
+    if (user == "false") return; // Cookies werden per user gespeichert
+    
+    var urlParams = new URLSearchParams(window.location.search);
+    
+    var data = getCookie('flashcard_'+user).split("/");
+    
+    console.log("Cookie 'flashcard_"+user+"' = "+data);
+    
+    // GET-Parameter "flashcard=continue" as marker
+    if (JSINFO["id"]==data[0]) {
+        
+        message("Letzte Sitzung fortsetzen: <a style='cursor:pointer' onclick='window.location.href=window.location.href+\"&flashcard=continue\"' >hier klicken</a>");
+        
+        // User has to be on correct page
+        if (urlParams.get('flashcard')=="continue") {
+            
+            awn = data[2];
+            awnsered.push(false); // Initial Menu
+            for (c=0;c<awn.length;c++) {
+                if (awn.charAt(c)=="0") {
+                    awnsered.push(false);awnsered.push(false);
+                } else {
+                    awnsered.push(true);awnsered.push(true);
+                }
+            }
+            
+            //console.log('Loaded Awnsers: '+awnsered.length);
+            
+            progressBar(0);
+            chosen = parseInt(data[1])-1;
+            
+            document.getElementById("fc_progress_fill").style.backgroundColor = "green";
+            nextQuestion();
+            
+            Menu((chosen % 2)+2);
+
+        }
+    }
+    
 }
 
 // This card is displayed at present

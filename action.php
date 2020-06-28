@@ -113,10 +113,15 @@ class action_plugin_flashcards extends DokuWiki_Action_Plugin {
     public function acl_info(&$event, $param) {
         global $JSINFO;        
         global $ID;
+        global $USERINFO;
         
         if (auth_quickaclcheck($ID) < AUTH_CREATE) {
             $JSINFO['access'] = 'reader';
         } else $JSINFO['access'] = 'editor';
+        
+        if (isset($USERINFO)) {
+            $JSINFO['user_id'] = $_SERVER['REMOTE_USER'];
+        } else $JSINFO['user_id'] = 'false';
         
     }
 }
