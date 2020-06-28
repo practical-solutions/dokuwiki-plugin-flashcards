@@ -1,0 +1,28 @@
+#steuerung,
+#card0,
+#editor,
+#plugin__flashcard_edit_btn {
+    display:none;
+}
+
+.flashcard {
+    overflow:hidden;
+    font-size:26px;
+    page-break-before:always;
+}
+
+img {
+    max-height:500px;
+    float:center;
+}
+
+blockquote {
+    font-size:80%;
+    color:gray;
+}
+
+h1 {
+    padding-top:5em;
+    font-size:50px;
+    text-align:center;
+}
