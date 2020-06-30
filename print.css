@@ -11,18 +11,12 @@
     page-break-before:always;
 }
 
-img {
+.flashcard img {
     max-height:500px;
     float:center;
 }
 
-blockquote {
+.flashcard blockquote {
     font-size:80%;
     color:gray;
-}
-
-h1 {
-    padding-top:5em;
-    font-size:50px;
-    text-align:center;
 }
