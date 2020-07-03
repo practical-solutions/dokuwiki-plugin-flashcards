@@ -24,7 +24,8 @@ class action_plugin_flashcards extends DokuWiki_Action_Plugin {
     public function register(Doku_Event_Handler $controller) {
 
         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this,'_ajax_call');
-        $controller->register_hook('DOKUWIKI_STARTED', 'AFTER',  $this, 'acl_info'); # pass ACL Level to JavaScript
+        $controller->register_hook('DOKUWIKI_STARTED', 'AFTER',  $this, 'acl_info');
+        $controller->register_hook('TPL_CONTENT_DISPLAY', 'BEFORE', $this,'mediacleanup');
 
     }
 
@@ -122,6 +123,49 @@ class action_plugin_flashcards extends DokuWiki_Action_Plugin {
         if (isset($USERINFO)) {
             $JSINFO['user_id'] = $_SERVER['REMOTE_USER'];
         } else $JSINFO['user_id'] = 'false';
+        
+        $JSINFO['plugin_flashcard__scrolltop'] = intval($this->getConf('scroll_top'));
+        
+    }
+    
+    # Check for unused mediafiles
+    public function mediacleanup (){
+        global $INFO;
+        
+        if (!isset($_GET['mediacleanup'])) return;
+        
+        $mediapath = DOKU_INC . 'data/media/' . str_replace(':','/',$INFO['namespace']);
+        $datapath = DOKU_INC . 'data/pages/' . str_replace(':','/',$INFO['namespace']);
+        
+        echo '<div style="font-family:Courier;font-weight:bold;color:white;background-color:black;">';
+        
+        echo "$datapath<br><br>";
+        
+        $pages = scandir($datapath);
+        $pages = array_diff(scandir($datapath), array('.', '..'));
+        foreach ($pages as $f) {
+            $p = $INFO['namespace'] . ':' . str_replace('.txt','',$f);
+            echo "$p<br>";
+            $data[] = str_replace(' ','_',strtolower(rawWiki($p)));
+        }
+        
+        echo "<br><hr>$mediapath<br><br><hr>";
+        
+        echo '<div style="column-count:3">';
+        $files = scandir($mediapath);
+        $files = array_diff(scandir($mediapath), array('.', '..'));
+        #print_r($files);
+        
+        foreach ($files as $f) {
+            if (strpos($data[0],$f)>0) {
+                echo "<span style='color:lightgreen'>$f</span>";
+            } else if (strpos($data[1],$f)>0) {
+                echo "<span style='color:yellow'>$f</span>";
+            } else echo "<span style='color:red'>$f</span>";
+            echo "<br>";
+        }
+        
+        echo '</div></div>';
         
     }
 }

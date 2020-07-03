@@ -20,7 +20,5 @@ Third card
 
 ## New Features
 
-* Saved state of current learning session for 48h (overwrite as soon as a different topic is started)
-* Responsive design for use on mobile phones
-* Bugfix on editing Mode. ACL Check on direct editing
+* Scroll-Top-Setting
 

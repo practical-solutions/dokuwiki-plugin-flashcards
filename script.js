@@ -6,26 +6,27 @@ function showPage(n=0){
 	document.getElementById("card"+chosen).style.display = "none";
 	
 	// move on
-	chosen += n;
-	
-	// check if valid; karten = amount of cards
-	if (chosen < 0) chosen = 0;
-	if (chosen > karten) chosen = karten;
-	
-	presentQ();
-	progressBar(Math.round((chosen/karten*100)));
+    chosen += n;
+
+    // check if valid; karten = amount of cards
+    if (chosen < 0) chosen = 0;
+    if (chosen > karten) chosen = karten;
+
+    presentQ();
+    progressBar(Math.round((chosen/karten*100)));
     
-	// display chosen card
-	document.getElementById("card"+chosen).style.display = "block";
-	
-	if (chosen==0) Menu(0);
+    // display chosen card
+    document.getElementById("card"+chosen).style.display = "block";
+
+    if (chosen==0) Menu(0);
     
-	
+    if (plugin_flashcard__top>0) window.scrollTo({ top: plugin_flashcard__top, behavior: 'smooth' });
 }
 
 
 // Display present question nr.
 function presentQ(){
+    
     if (chosen<1) loadFromCookie();
     
     document.getElementById("fc_info").innerHTML = "Frage "+(Math.round(chosen/2))+"/"+Math.round(karten/2);
@@ -34,6 +35,7 @@ function presentQ(){
         //console.log("Save: \n"+cookieText());
         setCookie("flashcard", cookieText(), 2);
     }
+    
 }
 
 /* start reading mode */
@@ -93,7 +95,8 @@ function nextQuestion(){
 	
 	progressBar(percentage());
 	presentQ();
-
+    
+    if (plugin_flashcard__top>0) window.scrollTo({ top: plugin_flashcard__top, behavior: 'smooth' });
 }
 
 /* percent correct awnsers */
@@ -346,3 +349,6 @@ var awnsered = new Array();
 
 // All cards in WikiMarkup for the Editor
 var card = new Array();
+
+// Display setting
+var plugin_flashcard__top = JSINFO['plugin_flashcard__scrolltop'];
