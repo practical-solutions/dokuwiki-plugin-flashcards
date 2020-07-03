@@ -18,7 +18,16 @@ Third card
 </cards>
 ```
 
+## Card Counter
+
+Placing ``~~countcards~~`` on  a page will count all the cards in the namespace recursively.
+
+The results are cached and will only be updated on "purge" of a page"
+
+
 ## New Features
 
 * Scroll-Top-Setting
+* Card counter
+* List media files
 

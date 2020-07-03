@@ -29,6 +29,7 @@ class syntax_plugin_flashcards extends DokuWiki_Syntax_Plugin {
 	
 	function connectTo($mode) {
 		$this->Lexer->addEntryPattern('<cards>',$mode,'plugin_flashcards');
+        $this->Lexer->addSpecialPattern('~~countcards~~',$mode,'plugin_flashcards');
     }
 
    
@@ -42,8 +43,45 @@ class syntax_plugin_flashcards extends DokuWiki_Syntax_Plugin {
 		if ($state == DOKU_LEXER_UNMATCHED) {
 			return $match;
 		}
+        
+        if ($match == '~~countcards~~') return '~~countcards~~';
           
         return false;
+    }
+
+    function getFileListAsArray(string $dir, bool $recursive = true, string $basedir = ''): array {
+        if ($dir == '') {
+            return array();
+        } else {
+            $results = array();
+            $subresults = array();
+        }
+        if (!is_dir($dir)) {
+            $dir = dirname($dir);
+        } // so a files path can be sent
+        if ($basedir == '') {
+            $basedir = realpath($dir) . DIRECTORY_SEPARATOR;
+        }
+
+        $files = scandir($dir);
+        foreach ($files as $key => $value) {
+            if (($value != '.') && ($value != '..')) {
+                $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
+                if (is_dir($path)) { // do not combine with the next line or..
+                    if ($recursive) { // ..non-recursive list will include subdirs
+                        $subdirresults = self::getFileListAsArray($path, $recursive, $basedir);
+                        $results = array_merge($results, $subdirresults);
+                    }
+                } else { // strip basedir and add to subarray to separate file list
+                    $subresults[str_replace($basedir, '', $path)] = $value;
+                }
+            }
+        }
+        // merge the subarray to give the list of files then subdirectory files
+        if (count($subresults) > 0) {
+            $results = array_merge($subresults, $results);
+        }
+        return $results;
     }
 
     /**
@@ -56,8 +94,56 @@ class syntax_plugin_flashcards extends DokuWiki_Syntax_Plugin {
      */
     public function render($format, Doku_Renderer $renderer, $data) {
         global $lang, $INFO, $ACT, $QUERY;
-		
-		if ($data === false) return;
+        
+        if ($data === false) return;
+        
+        # Count cards recursively
+        # Data is cached into cache.txt so that the files are not counted every time
+        # Cache must be refreshed be purge
+        if ($data == '~~countcards~~') {
+            $dir = DOKU_INC . 'data/pages/' .  str_replace(":","/",$INFO['namespace']) . "/";
+            
+            $cachefile = 'lib/plugins/flashcards/cache.txt';
+            if (file_exists($cachefile)) {
+                $cache = json_decode(file_get_contents($cachefile),true);
+            }
+            
+            # Return data in cache if available
+            if (!isset($_GET['purge']) && isset($cache[$dir])) {
+                $renderer->doc .= $cache[$dir];
+                return;
+            }
+            
+            # $renderer->doc .= $dir;
+            
+            $files = array_keys($this->getFileListAsArray($dir));
+            $sum = 0;
+            
+            # $renderer->doc .= '<pre>';
+            
+            for ($c=0;$c<count($files);$c++) {
+                $content = file_get_contents($dir.$files[$c]);
+                
+                preg_match("'<cards>(.*?)</cards>'si",$content,$match);
+                
+                if ($match == false) {
+                    $count = -1;
+                } else {
+                    $count = (substr_count($match[0],"----")+1) / 2;
+                    $sum += $count;
+                }
+                
+                # $renderer->doc .= $files[$c] . "-->" . $count . "\n";
+            }
+            
+            $renderer->doc .= "$sum (counted)";
+            # $renderer->doc .= "</pre>";
+            
+            $cache[$dir] = $sum;
+            file_put_contents($cachefile,json_encode($cache));
+            
+            return;
+        }
 		
         if($format == 'xhtml') {
 			
