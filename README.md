@@ -35,4 +35,4 @@ The results are cached and will only be updated on "purge" of a page"
 
 Tested with
 * PHP **7.3**
-* DokuWiki / **Hogfather**
+* DokuWiki / **Greebo** (NOT compatbile with Hogfather yet!)
