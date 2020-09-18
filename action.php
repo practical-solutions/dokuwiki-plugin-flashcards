@@ -8,7 +8,7 @@
 
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
-define(DEBUG,false);
+$DEBUG = false;
 
 /**
  * Class action_plugin_searchform
@@ -31,6 +31,7 @@ class action_plugin_flashcards extends DokuWiki_Action_Plugin {
 
     # Adds the Ajax-Call "editcard"
     public function _ajax_call(Doku_Event $event, $param) {
+        global $DEBUG;
         if ($event->data !== 'editcard') {
             return;
         }
@@ -47,17 +48,17 @@ class action_plugin_flashcards extends DokuWiki_Action_Plugin {
         # receive new card text
         $newtext = $INPUT->post->str('newtext');
         if(empty($newtext)) $query = $INPUT->get->str('newtext');
-        if(DEBUG && empty($newtext)) {echo "Error: No content received";return;}
+        if($DEBUG && empty($newtext)) {echo "Error: No content received";return;}
     
         # receive page id
         $id = $INPUT->post->str('id');
         if(empty($id)) $query = $INPUT->get->str('id');
-        if(DEBUG && empty($id)) {echo "Error: No id received";return;}
+        if($DEBUG && empty($id)) {echo "Error: No id received";return;}
         
         # receive card nr
         $cardnr = $INPUT->post->str('nr');
         if(empty($cardnr)) $query = $INPUT->get->str('nr');
-        if(DEBUG && empty($cardnr)) {echo "Error: No cardnr received";return;}
+        if($DEBUG && empty($cardnr)) {echo "Error: No cardnr received";return;}
 
         $newtext = rawurldecode($newtext);
 

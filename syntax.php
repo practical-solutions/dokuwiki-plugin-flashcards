@@ -25,6 +25,12 @@ class syntax_plugin_flashcards extends DokuWiki_Syntax_Plugin {
     public function getType() {
         return 'substition';
     }
+    
+    function getSort() { return 136; }
+    
+    function getPType() { return 'normal'; }
+    
+    function getAllowedTypes() { return array('formatting','substition'); }
 
 	
 	function connectTo($mode) {

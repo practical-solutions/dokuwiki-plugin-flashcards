@@ -31,3 +31,8 @@ The results are cached and will only be updated on "purge" of a page"
 * Card counter
 * List media files
 
+## Comptability
+
+Tested with
+* PHP **7.3**
+* DokuWiki / **Hogfather**
