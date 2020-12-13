@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Search Form: Inserts a search form in any page
+ * Plugin Flashcard: Creates Flashcards for a quiz
  *
- * @license    MIT
- * @author     Gero Gothe <practical@medizin-lernen.de>
+ * @license    GPL2
+ * @author     Gero Gothe <gero.gothe@medizindoku.de>
  */
  
 
@@ -32,29 +32,24 @@ class syntax_plugin_flashcards extends DokuWiki_Syntax_Plugin {
     
     function getAllowedTypes() { return array('formatting','substition'); }
 
-	
-	function connectTo($mode) {
-		$this->Lexer->addEntryPattern('<cards>',$mode,'plugin_flashcards');
+
+    function connectTo($mode) {
+        $this->Lexer->addSpecialPattern('<cards>.*?</cards>',$mode,'plugin_flashcards');
         $this->Lexer->addSpecialPattern('~~countcards~~',$mode,'plugin_flashcards');
     }
 
-   
-    function postConnect() {      
-      $this->Lexer->addExitPattern('</cards>', 'plugin_flashcards');
-    }
-	
 
     function handle($match, $state, $pos, Doku_Handler $handler){
-		
-		if ($state == DOKU_LEXER_UNMATCHED) {
-			return $match;
-		}
-        
-        if ($match == '~~countcards~~') return '~~countcards~~';
-          
-        return false;
+        return $match;
     }
 
+
+    /* Returns all files in a directory
+     * 
+     * Function is needed for counting the amount of flashcards in a namespace
+     * 
+     * @return: Array = list of files in a directory
+     */
     function getFileListAsArray(string $dir, bool $recursive = true, string $basedir = ''): array {
         if ($dir == '') {
             return array();
@@ -103,9 +98,11 @@ class syntax_plugin_flashcards extends DokuWiki_Syntax_Plugin {
         
         if ($data === false) return;
         
-        # Count cards recursively
-        # Data is cached into cache.txt so that the files are not counted every time
-        # Cache must be refreshed be purge
+        /* Count cards recursively
+         * 
+         * Data is cached into cache.txt so that the files are not counted every time
+         * Cache must be refreshed be purge
+         */
         if ($data == '~~countcards~~') {
             $dir = DOKU_INC . 'data/pages/' .  str_replace(":","/",$INFO['namespace']) . "/";
             
@@ -120,12 +117,8 @@ class syntax_plugin_flashcards extends DokuWiki_Syntax_Plugin {
                 return;
             }
             
-            # $renderer->doc .= $dir;
-            
             $files = array_keys($this->getFileListAsArray($dir));
             $sum = 0;
-            
-            # $renderer->doc .= '<pre>';
             
             for ($c=0;$c<count($files);$c++) {
                 $content = file_get_contents($dir.$files[$c]);
@@ -138,49 +131,80 @@ class syntax_plugin_flashcards extends DokuWiki_Syntax_Plugin {
                     $count = (substr_count($match[0],"----")+1) / 2;
                     $sum += $count;
                 }
-                
-                # $renderer->doc .= $files[$c] . "-->" . $count . "\n";
+
             }
             
             $renderer->doc .= "$sum (counted)";
-            # $renderer->doc .= "</pre>";
             
             $cache[$dir] = $sum;
             file_put_contents($cachefile,json_encode($cache));
             
             return;
         }
-		
+        
+        
+        /* Output playable flashcard quiz 
+         * 
+         * All flashcards are put in divs with an id="card<number>"
+         * "card0" contains the main menu
+         * 
+         * The css of these containers a set to "display=none" and only
+         * the present card is set to be displayed
+         */
         if($format == 'xhtml') {
-			
-			$renderer->doc .= file_get_contents("lib/plugins/flashcards/inc/header.html");
-			
-			$m = "";
-			$pages = array_map('trim', explode("----",$data));
-			
-			# Generate flashcard containers
-			for ($c=1;$c<count($pages)+1;$c++) {				
-				$p = $pages[$c-1];
-				$t= p_render('xhtml',p_get_instructions($p),$info);				
-				$m .= "<div class='flashcard' id='card$c'>".($t)."</div>";		
-			}
-			
-			# Show first page on start
-			$c--; # Dont count start page
-			$m .= "<script>karten=$c;showPage();</script>";
-			
-			$m .= "<script>";
-			
-			for ($c=0;$c<Count($pages);$c++) $m .= "card[$c]='".rawurlencode($pages[$c])."';\n";
-			
-			$m .= "</script>";
-						
-			$renderer->doc .= $m;
-			
-			$renderer->doc .= "<div id='plugin__flashcard_edit_btn' onclick='editMode()'>Bearbeiten</div>";
-			
-			return true;
-		}
+            global $conf;
+            
+            /* defer_js-option must be off */
+            if ($conf['defer_js'] == 1) {
+                msg($this->getLang("defer js msg"),2);
+                $data = str_replace('<cards>','',$data);
+                $data = str_replace('</cards>','',$data);
+                $renderer->doc .= p_render('xhtml',p_get_instructions($data),$info);
+                return;
+            }
+            
+            $replacements = Array('%QUIZ%'       => $this->getLang('menu start'),
+                                  '%QUIZ SUB%'   => $this->getLang('menu start sub'),
+                                  '%SCROLL%'     => $this->getLang('menu scroll'),
+                                  '%SCROLL SUB%' => $this->getLang('menu scroll sub'),
+                                  '%ALL%'        => $this->getLang('menu all'),
+                                  '%ALL SUB%'    => $this->getLang('menu all sub')
+                                  );
+            $renderer->doc .= strtr(file_get_contents("lib/plugins/flashcards/inc/header.html"),$replacements);
+
+            $m = "";
+            $data = str_replace('<cards>','',$data);
+            $data = str_replace('</cards>','',$data);
+            
+            $pages = array_map('trim', explode("----",$data));
+
+            # Generate flashcard div containers
+            for ($c=1;$c<count($pages)+1;$c++) {
+                $p = $pages[$c-1];
+                $t= p_render('xhtml',p_get_instructions($p),$info);
+                $m .= "<div class='flashcard' id='card$c'>".($t)."</div>";
+            }
+            
+            
+            # Show first page on start
+            $c--; # Dont count start page
+            $m .= "<script>karten=$c;showPage();</script>";
+
+            /* The content of the cards are also placed into a js-variable in order
+             * to be sent to an ajax script for editing
+             */
+            $m .= "<script>";
+            for ($c=0;$c<Count($pages);$c++) $m .= "card[$c]='".rawurlencode($pages[$c])."';\n";
+            $m .= "</script>";
+            
+            $renderer->doc .= $m;
+            
+            # Hide all cards per js
+            $renderer->doc .= "<script type='text/javascript'>hideAll();</script>";
+            $renderer->doc .= "<input type='button' id='plugin__flashcard_edit_btn' onclick='editMode();' value='".$this->getLang('edit btn')."'>";
+
+            return true;
+        }
         
         return false;
     }

@@ -8,9 +8,9 @@
    <img id='btn6' class='fc_button' onclick='flip(1)' src='lib/plugins/flashcards/img/redo.png'>
 
    <div id='fc_info'></div>
-				   
+
    <div class='fc_progressbar'>
-	   <div id='fc_progress_fill'></div>
+        <div id='fc_progress_fill'></div>
    </div>
    
 </div>
@@ -18,39 +18,39 @@
 <div id="plugin__flashcard_message"></div>
 
 <div class='flashcard' id='card0'>
-	<div class='fc_button' onclick='startquiz()'>
-		<img src='lib/plugins/flashcards/img/quiz.png'>
-		<div class='fc-btn-caption'>Quiz starten</div>
-		<span>Antworten evaluieren und wiederholen, bis sie im Gedächtnis sind</span>
-	</div>
-	<br><hr>
-	<div class='fc_button' onclick='startread()'>
-		<img src='lib/plugins/flashcards/img/info.png'>
-		<div class='fc-btn-caption'>Fragen durchscrollen</div>
-		<span>Fragen und Antworten durchblättern</span>
-	</div>
-	<br><hr>
-	<div class='fc_button' onclick='showall()'>
-		<img src='lib/plugins/flashcards/img/read.png'>
-		<div class='fc-btn-caption'>Alles zeigen</div>
-		<span>Fragen und Antworten hintereinander anzeigen</span>
-	</div>
+    <div class='fc_button' onclick='startquiz()'>
+        <img src='lib/plugins/flashcards/img/quiz.png'>
+        <div class='fc-btn-caption'>%QUIZ%</div>
+        <span>%QUIZ SUB%</span>
+    </div>
+    <br><hr>
+    <div class='fc_button' onclick='startread()'>
+        <img src='lib/plugins/flashcards/img/info.png'>
+        <div class='fc-btn-caption'>%SCROLL%</div>
+        <span>%SCROLL SUB%</span>
+    </div>
+    <br><hr>
+    <div class='fc_button' onclick='showall()'>
+        <img src='lib/plugins/flashcards/img/read.png'>
+        <div class='fc-btn-caption'>%ALL%</div>
+        <span>%ALL SUB%</span>
+    </div>
 </div>
 
 
 <div id="editor">
 
-	<div id="ajax_wait" onclick="switchAjaxLoad(1);">
-		<img src='lib/plugins/flashcards/img/loader_arrow_small.gif'>
-		Bitte warten.
-	</div>
+    <div id="ajax_wait" onclick="switchAjaxLoad(1);">
+        <img src='lib/plugins/flashcards/img/loader_arrow_small.gif'>
+        Bitte warten.
+    </div>
 
-	<div id="editor_ribbon">
-		<input type="button" onclick="saveCard();" value="Speichern">
-		<input type="button" onclick="readMode();" value="Abbrechen">
-	</div>
+    <div id="editor_ribbon">
+        <input type="button" onclick="saveCard();" value="Speichern">
+        <input type="button" onclick="readMode();" value="Abbrechen">
+    </div>
 
-	<textarea id="cardtext" rows="12" cols="50"></textarea>
+    <textarea id="cardtext" rows="12" cols="50"></textarea>
     <div class="plugin__flashcards__bottomribbon">
         <input type="button" onclick="getPre();" value="Inhalt von Vorkarte laden">
     </div>
